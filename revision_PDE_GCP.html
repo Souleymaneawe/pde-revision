@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Révision PDE — Google Cloud Professional Data Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --card: #141c2e;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8eaf0;
+    --muted: #7a8499;
+    --accent: #4fffb0;
+    --accent2: #7c6dff;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #4fc3f7;
+    --teal: #1de9b6;
+    --glow: rgba(79,255,176,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0f1729 50%, #0a1628 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 1rem;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .logo span { color: var(--text); }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav a {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  nav a:hover, nav a.active { color: var(--accent); background: rgba(79,255,176,0.08); }
+  .progress-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(79,255,176,0.1);
+    border: 1px solid rgba(79,255,176,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(79,255,176,0.08);
+    border: 1px solid rgba(79,255,176,0.2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-badge::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+  .hero h1 .highlight { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem; }
+  .hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .progress-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .progress-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .progress-item { margin-bottom: 0.75rem; }
+  .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .progress-info span:last-child { font-family: 'Space Mono', monospace; color: var(--accent); }
+  .bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 1s ease; }
+  .global-progress { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .global-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    text-align: center;
+  }
+  .global-label { text-align: center; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* ===== MAIN ===== */
+  main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+  /* ===== SECTION TITLE ===== */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .section-header .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ===== THEME TABS ===== */
+  .theme-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .theme-tab {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .theme-tab:hover { color: var(--text); border-color: var(--border2); background: var(--bg3); }
+  .theme-tab.active { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+  /* ===== FICHE ===== */
+  .fiche-panel { display: none; }
+  .fiche-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .fiche-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .fiche-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .fiche-card:hover { border-color: var(--border2); }
+  .fiche-card.full { grid-column: 1 / -1; }
+  .fiche-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .fiche-card p { font-size: 13px; line-height: 1.7; color: var(--text); }
+
+  .pill-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .pill-green { background: rgba(29,233,182,0.08); color: var(--teal); border-color: rgba(29,233,182,0.2); }
+  .pill-purple { background: rgba(124,109,255,0.08); color: var(--accent2); border-color: rgba(124,109,255,0.2); }
+  .pill-blue { background: rgba(79,195,247,0.08); color: var(--accent5); border-color: rgba(79,195,247,0.2); }
+  .pill-yellow { background: rgba(255,209,102,0.08); color: var(--accent4); border-color: rgba(255,209,102,0.2); }
+  .pill-red { background: rgba(255,107,107,0.08); color: var(--accent3); border-color: rgba(255,107,107,0.2); }
+
+  .vs-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .vs-table th { background: rgba(255,255,255,0.04); padding: 7px 10px; text-align: left; font-weight: 600; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+  .vs-table td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; vertical-align: top; }
+  .vs-table tr:last-child td { border-bottom: none; }
+
+  .tip-box {
+    background: rgba(29,233,182,0.06);
+    border: 1px solid rgba(29,233,182,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--teal);
+    line-height: 1.6;
+  }
+  .warn-box {
+    background: rgba(255,209,102,0.06);
+    border: 1px solid rgba(255,209,102,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--accent4);
+    line-height: 1.6;
+  }
+  .code-box {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    line-height: 1.8;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* ===== Q&A ===== */
+  .qa-section { margin-top: 2rem; }
+  .qa-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: gap; gap: 0.5rem; }
+  .qa-header h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+  .qa-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .qa-btn {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .qa-btn:hover { color: var(--text); background: var(--bg3); }
+  .qa-btn.primary { background: rgba(79,255,176,0.1); color: var(--accent); border-color: rgba(79,255,176,0.25); }
+  .qa-btn.primary:hover { background: rgba(79,255,176,0.18); }
+
+  .qa-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .qa-item:hover { border-color: var(--border2); }
+  .qa-item.correct { border-color: rgba(29,233,182,0.3); }
+  .qa-item.incorrect { border-color: rgba(255,107,107,0.3); }
+
+  .qa-question {
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    user-select: none;
+  }
+  .qa-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    min-width: 28px;
+    padding-top: 2px;
+  }
+  .qa-q { font-size: 13px; font-weight: 500; flex: 1; line-height: 1.5; }
+  .qa-chevron { font-size: 11px; color: var(--muted); transition: transform 0.2s; padding-top: 3px; }
+  .qa-chevron.open { transform: rotate(180deg); }
+  .qa-difficulty {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .diff-easy { background: rgba(29,233,182,0.1); color: var(--teal); }
+  .diff-med { background: rgba(255,209,102,0.1); color: var(--accent4); }
+  .diff-hard { background: rgba(255,107,107,0.1); color: var(--accent3); }
+
+  .qa-answer {
+    display: none;
+    padding: 0 16px 14px 56px;
+    animation: fadeIn 0.2s ease;
+  }
+  .qa-answer.open { display: block; }
+  .qa-answer-text { font-size: 13px; line-height: 1.7; color: var(--text); margin-bottom: 10px; }
+  .answer-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .mark-btn {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .mark-correct { color: var(--teal); border-color: rgba(29,233,182,0.2); }
+  .mark-correct:hover { background: rgba(29,233,182,0.08); }
+  .mark-incorrect { color: var(--accent3); border-color: rgba(255,107,107,0.2); }
+  .mark-incorrect:hover { background: rgba(255,107,107,0.08); }
+
+  /* ===== QUIZ MODE ===== */
+  .quiz-section { margin-top: 2rem; }
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .quiz-card.hidden { display: none; }
+  .quiz-counter { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 1.5rem; }
+  .quiz-q { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 2rem; line-height: 1.5; }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+  .quiz-opt {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+  .quiz-opt:hover { border-color: var(--accent2); background: rgba(124,109,255,0.08); }
+  .quiz-opt.correct { border-color: var(--teal); background: rgba(29,233,182,0.08); color: var(--teal); }
+  .quiz-opt.incorrect { border-color: var(--accent3); background: rgba(255,107,107,0.08); color: var(--accent3); }
+  .quiz-opt:disabled { cursor: default; }
+  .quiz-explain {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    text-align: left;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .quiz-explain.show { display: block; animation: fadeIn 0.3s ease; }
+  .quiz-next {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: none;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .quiz-next:hover { opacity: 0.85; }
+  .quiz-score {
+    font-family: 'Space Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 1rem 0;
+  }
+
+  /* ===== PLANNING ===== */
+  .planning-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .planning-week {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .planning-week:hover { border-color: var(--border2); }
+  .week-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .week-title-plan { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .week-dates-plan { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .week-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .tag-s1 { background: rgba(29,233,182,0.1); color: var(--teal); }
+  .tag-s2 { background: rgba(79,195,247,0.1); color: var(--accent5); }
+  .tag-exam { background: rgba(255,209,102,0.1); color: var(--accent4); }
+  .tag-prep { background: rgba(124,109,255,0.1); color: var(--accent2); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--accent); }
+  .footer-links { display: flex; gap: 1rem; }
+  .footer-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding: 2rem 1rem; }
+    .fiche-grid { grid-template-columns: 1fr; }
+    .planning-grid { grid-template-columns: 1fr 1fr; }
+    .quiz-options { grid-template-columns: 1fr; }
+    main { padding: 1rem; }
+    .hero h1 { font-size: 2rem; }
+    nav { display: none; }
+  }
+  @media (max-width: 480px) {
+    .planning-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">PDE<span> Révision</span></div>
+    <nav>
+      <a href="#fiches" class="active">Fiches</a>
+      <a href="#qa">Q&amp;A</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#planning">Planning</a>
+    </nav>
+    <div class="progress-pill" id="header-progress">0% complété</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section style="background: linear-gradient(135deg, #0a0e1a 0%, #0d1523 100%); border-bottom: 1px solid var(--border);">
+  <div class="hero">
+    <div>
+      <div class="hero-badge">Programme actif — Édition 2, 2026</div>
+      <h1>Certification <span class="highlight">Professional<br>Data Engineer</span></h1>
+      <p>Votre guide de révision complet pour décrocher la certification GCP PDE. Fiches thématiques, questions d'examen et quiz interactifs.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">8</span><span class="stat-label">Thèmes</span></div>
+        <div class="stat"><span class="stat-num">64</span><span class="stat-label">Questions</span></div>
+        <div class="stat"><span class="stat-num">9</span><span class="stat-label">Semaines</span></div>
+        <div class="stat"><span class="stat-num">17 sept</span><span class="stat-label">Deadline</span></div>
+      </div>
+    </div>
+    <div class="progress-card">
+      <h3>Progression par thème</h3>
+      <div class="progress-item">
+        <div class="progress-info"><span>BigQuery</span><span id="p-bigquery">0%</span></div>
+        <div class="bar"><div class="bar-fill" id="b-bigquery" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-info"><span>Pub/Sub</span><span id="p-pubsub">0%</span></div>
+        <div class="bar"><div class="bar-fill" id="b-pubsub" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-info"><span>Dataflow</span><span id="p-dataflow">0%</span></div>
+        <div class="bar"><div class="bar-fill" id="b-dataflow" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-info"><span>Dataproc</span><span id="p-dataproc">0%</span></div>
+        <div class="bar"><div class="bar-fill" id="b-dataproc" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-info"><span>Vertex AI</span><span id="p-vertex">0%</span></div>
+        <div class="bar"><div class="bar-fill" id="b-vertex" style="width:0%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-info"><span>Sécurité</span><span id="p-security">0%</span></div>
+        <div class="bar"><div class="bar-fill" id="b-security" style="width:0%"></div></div>
+      </div>
+      <div class="global-progress">
+        <span class="global-num" id="global-pct">0%</span>
+        <div class="global-label">Progression globale</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+
+  <!-- ===== FICHES ===== -->
+  <section id="fiches" style="padding-top: 3rem;">
+    <div class="section-header">
+      <h2>Fiches de révision</h2>
+      <span class="tag">// 8 thèmes couverts</span>
+    </div>
+    <div class="theme-tabs">
+      <button class="theme-tab active" onclick="showTheme('bigquery')">BigQuery</button>
+      <button class="theme-tab" onclick="showTheme('pubsub')">Pub/Sub</button>
+      <button class="theme-tab" onclick="showTheme('dataflow')">Dataflow</button>
+      <button class="theme-tab" onclick="showTheme('dataproc')">Dataproc</button>
+      <button class="theme-tab" onclick="showTheme('composer')">Cloud Composer</button>
+      <button class="theme-tab" onclick="showTheme('storage')">Cloud Storage</button>
+      <button class="theme-tab" onclick="showTheme('vertex')">Vertex AI</button>
+      <button class="theme-tab" onclick="showTheme('security')">Sécurité</button>
+    </div>
+
+    <!-- BIGQUERY -->
+    <div id="fiche-bigquery" class="fiche-panel active">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Data warehouse serverless et entièrement managé. Optimisé pour l'analyse OLAP (pas OLTP). Facturation à la donnée scannée. Supporte des pétaoctets de données avec des requêtes SQL standards.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Concepts clés (~30% de l'examen)</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-blue">Partitionnement</span>
+            <span class="pill pill-blue">Clustering</span>
+            <span class="pill pill-blue">STRUCT / ARRAY</span>
+            <span class="pill pill-blue">Vues matérialisées</span>
+            <span class="pill pill-blue">BigQuery ML</span>
+            <span class="pill pill-blue">Slots</span>
+            <span class="pill pill-blue">Authorized Views</span>
+            <span class="pill pill-blue">BI Engine</span>
+          </div>
+        </div>
+        <div class="fiche-card full">
+          <h4>Partitionnement vs Clustering</h4>
+          <table class="vs-table">
+            <tr><th>Partitionnement</th><th>Clustering</th></tr>
+            <tr><td>Divise physiquement la table par colonne (date, entier)</td><td>Trie les données par colonnes fréquemment filtrées</td></tr>
+            <tr><td>Réduit les données scannées → réduit le coût</td><td>Réduit les données lues → améliore la vitesse</td></tr>
+            <tr><td>Max 1 colonne de partition</td><td>Jusqu'à 4 colonnes de clustering</td></tr>
+            <tr><td>Ex: partition par date de commande</td><td>Ex: cluster par pays, catégorie produit</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>Exemple SQL</h4>
+          <div class="code-box">CREATE TABLE dataset.commandes
+PARTITION BY DATE(date_commande)
+CLUSTER BY pays, categorie
+AS SELECT * FROM dataset.raw;</div>
+        </div>
+        <div class="fiche-card">
+          <h4>Optimisation des requêtes</h4>
+          <p style="font-size:13px; line-height:1.7;">Éviter SELECT * · Filtrer sur la colonne de partition · Utiliser des vues matérialisées pour les requêtes répétitives · Analyser le plan d'exécution via INFORMATION_SCHEMA</p>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle d'or</h4>
+          <div class="tip-box">Toujours partitionner par date en premier, puis clusterer par les colonnes WHERE les plus utilisées. Éviter SELECT * sur une table partitionnée — ça scanne TOUT.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Piège fréquent</h4>
+          <div class="warn-box">BigQuery ML = modèles simples directement en SQL. Pour des modèles plus complexes, utiliser Vertex AI. Les deux se complètent et ne s'excluent pas.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUBSUB -->
+    <div id="fiche-pubsub" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Service de messagerie publish/subscribe entièrement managé. Découple les producteurs et consommateurs. Garantit la livraison des messages même si le consommateur est hors ligne.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Composantes clés</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-green">Topic</span>
+            <span class="pill pill-green">Subscription</span>
+            <span class="pill pill-green">Publisher</span>
+            <span class="pill pill-green">Subscriber</span>
+            <span class="pill pill-green">Acknowledgement</span>
+            <span class="pill pill-green">Dead Letter Queue</span>
+          </div>
+        </div>
+        <div class="fiche-card full">
+          <h4>Push vs Pull Subscription</h4>
+          <table class="vs-table">
+            <tr><th>Pull</th><th>Push</th></tr>
+            <tr><td>Le subscriber demande activement les messages</td><td>Pub/Sub envoie automatiquement vers un endpoint HTTPS</td></tr>
+            <tr><td>Idéal pour traitement batch ou variable</td><td>Idéal pour webhooks et Cloud Functions</td></tr>
+            <tr><td>Contrôle total sur le rythme de consommation</td><td>Latence plus faible, plus simple à configurer</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>Flux typique dans un pipeline</h4>
+          <div class="code-box">Sources → Pub/Sub Topic
+       → Dataflow (transformation)
+       → BigQuery (analytique)
+       → Cloud Storage (archive)</div>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle d'or</h4>
+          <div class="tip-box">Pub/Sub = boîte aux lettres intelligente. Le facteur (publisher) dépose, le destinataire (subscriber) relève quand il veut. Toujours acquitter (ACK) après traitement.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Piège fréquent</h4>
+          <div class="warn-box">Messages non acquittés → réenvoyés automatiquement → doublons. Toujours implémenter l'ACK après traitement réussi pour éviter les retraitements.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATAFLOW -->
+    <div id="fiche-dataflow" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Service managé de traitement de données basé sur Apache Beam. Un seul pipeline Python/Java fonctionne en batch ET en streaming sans modifier le code. Serverless et autoscalable.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Concepts clés Apache Beam</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-purple">PCollection</span>
+            <span class="pill pill-purple">PTransform</span>
+            <span class="pill pill-purple">Pipeline</span>
+            <span class="pill pill-purple">Windowing</span>
+            <span class="pill pill-purple">Watermark</span>
+            <span class="pill pill-purple">Triggers</span>
+            <span class="pill pill-purple">Templates</span>
+            <span class="pill pill-purple">Autoscaling</span>
+          </div>
+        </div>
+        <div class="fiche-card full">
+          <h4>Types de fenêtres (Windowing)</h4>
+          <table class="vs-table">
+            <tr><th>Type</th><th>Description</th><th>Usage</th></tr>
+            <tr><td>Fixed</td><td>Fenêtres de durée fixe sans chevauchement</td><td>Rapport toutes les 5 minutes</td></tr>
+            <tr><td>Sliding</td><td>Fenêtres glissantes avec chevauchement</td><td>Moyenne mobile sur 1 heure</td></tr>
+            <tr><td>Session</td><td>Fenêtre basée sur l'activité utilisateur</td><td>Sessions web analytics</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>Dataflow vs Dataproc</h4>
+          <table class="vs-table">
+            <tr><th>Dataflow</th><th>Dataproc</th></tr>
+            <tr><td>Serverless, pas de cluster</td><td>Cluster Hadoop/Spark à gérer</td></tr>
+            <tr><td>Nouveaux pipelines from scratch</td><td>Migration jobs Hadoop existants</td></tr>
+            <tr><td>Batch + Streaming unified</td><td>Spark, Hive, Pig spécifiques</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle d'or</h4>
+          <div class="tip-box">Pour tout nouveau pipeline sur GCP → Dataflow. Pour migrer des workloads Hadoop/Spark existants → Dataproc. La règle est simple et testée fréquemment.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Piège fréquent</h4>
+          <div class="warn-box">Watermark ≠ Trigger. Le watermark indique quand les données tardives ne seront plus acceptées. Le trigger définit quand émettre les résultats intermédiaires d'une fenêtre.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATAPROC -->
+    <div id="fiche-dataproc" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Service managé pour exécuter des workloads Apache Hadoop, Spark, Hive et Pig sur GCP. Idéal pour migrer des pipelines existants vers le cloud ou des jobs Spark complexes.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Concepts clés</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-yellow">Cluster</span>
+            <span class="pill pill-yellow">Jobs Spark</span>
+            <span class="pill pill-yellow">Hive</span>
+            <span class="pill pill-yellow">HDFS → GCS</span>
+            <span class="pill pill-yellow">Autoscaling</span>
+            <span class="pill pill-yellow">Cluster éphémère</span>
+            <span class="pill pill-yellow">Preemptible VMs</span>
+          </div>
+        </div>
+        <div class="fiche-card full">
+          <h4>Quand choisir Dataproc ?</h4>
+          <table class="vs-table">
+            <tr><th>Dataproc</th><th>Dataflow</th></tr>
+            <tr><td>Migration de jobs Hadoop/Spark existants</td><td>Nouveaux pipelines from scratch</td></tr>
+            <tr><td>Workloads Hive, Pig, HBase nécessaires</td><td>Pipelines batch et streaming unifiés</td></tr>
+            <tr><td>Contrôle fin sur la configuration cluster</td><td>Serverless, zéro gestion d'infrastructure</td></tr>
+            <tr><td>Plus économique pour jobs longs et intensifs</td><td>Plus simple à opérer et maintenir</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle d'or</h4>
+          <div class="tip-box">Si la question mentionne "migration Hadoop", "jobs Spark existants" ou "Hive" → réponse = Dataproc. Pipeline nouveau → Dataflow. Cette distinction est testée à chaque examen.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Best Practice</h4>
+          <div class="warn-box">Utilisez des clusters éphémères (créés pour un job, supprimés après) et stockez sur GCS plutôt que HDFS. Réduction des coûts jusqu'à 70% avec les Preemptible VMs.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPOSER -->
+    <div id="fiche-composer" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Service d'orchestration de workflows managé basé sur Apache Airflow. Planifie, séquence et monitore des pipelines complexes avec des dépendances entre tâches via des DAGs Python.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Concepts clés</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-green">DAG</span>
+            <span class="pill pill-green">Operator</span>
+            <span class="pill pill-green">Task</span>
+            <span class="pill pill-green">Scheduler</span>
+            <span class="pill pill-green">XComs</span>
+            <span class="pill pill-green">Hooks</span>
+            <span class="pill pill-green">Connections</span>
+          </div>
+        </div>
+        <div class="fiche-card">
+          <h4>Structure d'un DAG Python</h4>
+          <div class="code-box">from airflow import DAG
+from airflow.operators.python import PythonOperator
+
+with DAG('pipeline_pde',
+    schedule_interval='@daily') as dag:
+
+  t1 = PythonOperator(
+    task_id='extraire',
+    python_callable=extraire)
+  t2 = PythonOperator(
+    task_id='charger_bq',
+    python_callable=charger)
+
+  t1 >> t2  # Séquence</div>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle d'or</h4>
+          <div class="tip-box">Composer = chef d'orchestre. Il ne traite pas les données — il dit à Dataflow, BigQuery et Cloud Storage quand et comment travailler ensemble. Pas de traitement temps réel.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Piège fréquent</h4>
+          <div class="warn-box">Cloud Composer n'est pas pour le temps réel. Pour le streaming → Pub/Sub + Dataflow. Composer est pour l'orchestration batch planifiée (quotidien, hebdomadaire, etc.).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORAGE -->
+    <div id="fiche-storage" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Stockage objet scalable et durable pour tout type de fichier. Sert de landing zone pour les données brutes avant transformation, et d'archive pour les données historiques à long terme.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Classes de stockage</h4>
+          <table class="vs-table">
+            <tr><th>Classe</th><th>Usage</th></tr>
+            <tr><td>Standard</td><td>Données actives, accès fréquent</td></tr>
+            <tr><td>Nearline</td><td>Accès ~1x/mois</td></tr>
+            <tr><td>Coldline</td><td>Accès ~1x/trimestre</td></tr>
+            <tr><td>Archive</td><td>Accès ~1x/an, backup long terme</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>Concepts clés</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-blue">Bucket</span>
+            <span class="pill pill-blue">Object</span>
+            <span class="pill pill-blue">Lifecycle rules</span>
+            <span class="pill pill-blue">Versioning</span>
+            <span class="pill pill-blue">Signed URLs</span>
+            <span class="pill pill-blue">IAM + ACL</span>
+            <span class="pill pill-blue">Transfer Service</span>
+          </div>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle d'or</h4>
+          <div class="tip-box">GCS = disque dur universel de GCP. Toutes les données brutes y passent avant BigQuery. Utilisez les Lifecycle rules pour migrer automatiquement vers Coldline/Archive après X jours.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Piège fréquent</h4>
+          <div class="warn-box">Ne pas confondre GCS (stockage objet non structuré, fichiers) et BigQuery (stockage analytique structuré, tables SQL). GCS stocke des fichiers, BigQuery stocke des tables.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERTEX AI -->
+    <div id="fiche-vertex" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>Plateforme ML unifiée de GCP pour entraîner, évaluer, déployer et monitorer des modèles ML. Directement lié à la mission Anthropic — maîtriser Vertex AI est un différenciateur fort.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Composantes clés</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-purple">Workbench</span>
+            <span class="pill pill-purple">AutoML</span>
+            <span class="pill pill-purple">Custom Training</span>
+            <span class="pill pill-purple">Feature Store</span>
+            <span class="pill pill-purple">Model Registry</span>
+            <span class="pill pill-purple">Pipelines</span>
+            <span class="pill pill-purple">Endpoints</span>
+            <span class="pill pill-purple">Model Monitoring</span>
+          </div>
+        </div>
+        <div class="fiche-card full">
+          <h4>AutoML vs Custom Training vs BigQuery ML</h4>
+          <table class="vs-table">
+            <tr><th>AutoML</th><th>Custom Training</th><th>BigQuery ML</th></tr>
+            <tr><td>Pas de code ML requis</td><td>Contrôle total sur l'architecture</td><td>SQL uniquement</td></tr>
+            <tr><td>Prototypage rapide</td><td>Modèles complexes/spécifiques</td><td>Données déjà dans BigQuery</td></tr>
+            <tr><td>GCP gère tout</td><td>Code d'entraînement custom</td><td>Pas de mouvement de données</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Lien Anthropic</h4>
+          <div class="tip-box">Vertex AI Feature Store = gestion centralisée des features pour des modèles cohérents. C'est exactement ce dont Anthropic a besoin pour ses pipelines d'évaluation de Claude.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Data Drift — Concept clé</h4>
+          <div class="warn-box">La dérive des données dégrade silencieusement les modèles ML. Vertex AI Model Monitoring détecte automatiquement les changements de distribution et déclenche des alertes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECURITE -->
+    <div id="fiche-security" class="fiche-panel">
+      <div class="fiche-grid">
+        <div class="fiche-card">
+          <h4>Rôle principal</h4>
+          <p>La sécurité des données est le différenciateur clé chez Anthropic. IAM, DLP, VPC Controls et Audit Logs forment le socle de tout pipeline de données sécurisé en production.</p>
+        </div>
+        <div class="fiche-card">
+          <h4>Concepts clés</h4>
+          <div class="pill-cloud">
+            <span class="pill pill-red">IAM</span>
+            <span class="pill pill-red">Cloud DLP</span>
+            <span class="pill pill-red">VPC Controls</span>
+            <span class="pill pill-red">CMEK</span>
+            <span class="pill pill-red">Audit Logs</span>
+            <span class="pill pill-red">Dataplex</span>
+            <span class="pill pill-red">Data Catalog</span>
+            <span class="pill pill-red">Authorized Views</span>
+          </div>
+        </div>
+        <div class="fiche-card full">
+          <h4>IAM — Principe du moindre privilège</h4>
+          <table class="vs-table">
+            <tr><th>Type de rôle</th><th>Description</th><th>Usage</th></tr>
+            <tr><td>Primitifs</td><td>Owner, Editor, Viewer</td><td>À éviter en production — trop larges</td></tr>
+            <tr><td>Prédéfinis</td><td>BigQuery Data Viewer, Dataflow Worker…</td><td>Recommandés pour la plupart des cas</td></tr>
+            <tr><td>Personnalisés</td><td>Permissions exactes nécessaires</td><td>Cas très spécifiques, granularité max</td></tr>
+            <tr><td>Compte de service</td><td>Identité pour les applications</td><td>Jamais pour les humains</td></tr>
+          </table>
+        </div>
+        <div class="fiche-card">
+          <h4>Flux sécurisé recommandé</h4>
+          <div class="code-box">Source
+  → Cloud DLP (masquage PII)
+  → Dataflow (transformation)
+  → BigQuery (stockage chiffré)
+  → Audit Logs (traçabilité)</div>
+        </div>
+        <div class="fiche-card">
+          <h4>✅ Règle Anthropic</h4>
+          <div class="tip-box">La sécurité des données n'est pas optionnelle — c'est le cœur de la mission Anthropic. Pensez "sécurité en premier" dans chaque décision de pipeline lors de l'entretien.</div>
+        </div>
+        <div class="fiche-card">
+          <h4>⚠️ Piège fréquent</h4>
+          <div class="warn-box">Les Data Access Logs de BigQuery NE sont PAS actifs par défaut. Ils doivent être activés explicitement dans IAM → Audit Logs. Erreur classique à l'examen et en production.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Q&A ===== -->
+  <section id="qa" style="padding-top: 3rem;">
+    <div class="section-header">
+      <h2>Questions & Réponses</h2>
+      <span class="tag">// 64 questions d'examen</span>
+    </div>
+
+    <div class="theme-tabs">
+      <button class="theme-tab active" onclick="showQA('all')">Tout</button>
+      <button class="theme-tab" onclick="showQA('bigquery')">BigQuery</button>
+      <button class="theme-tab" onclick="showQA('pubsub')">Pub/Sub</button>
+      <button class="theme-tab" onclick="showQA('dataflow')">Dataflow</button>
+      <button class="theme-tab" onclick="showQA('dataproc')">Dataproc</button>
+      <button class="theme-tab" onclick="showQA('vertex')">Vertex AI</button>
+      <button class="theme-tab" onclick="showQA('security')">Sécurité</button>
+    </div>
+
+    <div class="qa-section">
+      <div class="qa-header">
+        <h3 id="qa-title">Toutes les questions</h3>
+        <div class="qa-controls">
+          <button class="qa-btn primary" onclick="expandAll()">Tout révéler</button>
+          <button class="qa-btn" onclick="collapseAll()">Tout fermer</button>
+        </div>
+      </div>
+      <div id="qa-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section id="quiz" style="padding-top: 3rem;">
+    <div class="section-header">
+      <h2>Mode Quiz</h2>
+      <span class="tag">// Testez vos connaissances</span>
+    </div>
+
+    <div class="theme-tabs">
+      <button class="theme-tab active" onclick="startQuiz('all')">Tout mélanger</button>
+      <button class="theme-tab" onclick="startQuiz('bigquery')">BigQuery</button>
+      <button class="theme-tab" onclick="startQuiz('pubsub')">Pub/Sub</button>
+      <button class="theme-tab" onclick="startQuiz('dataflow')">Dataflow</button>
+      <button class="theme-tab" onclick="startQuiz('security')">Sécurité</button>
+    </div>
+
+    <div class="quiz-section">
+      <div class="quiz-card" id="quiz-main">
+        <div class="quiz-counter" id="quiz-counter">Question 1 / 10</div>
+        <div class="quiz-q" id="quiz-q">Choisissez un thème pour commencer le quiz</div>
+        <div class="quiz-options" id="quiz-opts"></div>
+        <div class="quiz-explain" id="quiz-explain"></div>
+        <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">Question suivante →</button>
+      </div>
+      <div class="quiz-card hidden" id="quiz-result">
+        <div style="font-size:1rem; color:var(--muted); margin-bottom:0.5rem;">Score final</div>
+        <div class="quiz-score" id="quiz-score-num">0/10</div>
+        <div style="font-size:13px; color:var(--muted); margin-bottom:1.5rem;" id="quiz-msg"></div>
+        <button class="quiz-next" style="display:inline-block;" onclick="restartQuiz()">Recommencer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PLANNING ===== -->
+  <section id="planning" style="padding-top: 3rem; margin-bottom: 2rem;">
+    <div class="section-header">
+      <h2>Planning 9 semaines</h2>
+      <span class="tag">// 8 juin → 17 septembre 2026</span>
+    </div>
+    <div class="planning-grid">
+      <div class="planning-week">
+        <div class="week-num">Semaine 01 · 8–12 juin</div>
+        <div class="week-title-plan">Ouverture + Fondamentaux GCP</div>
+        <div class="week-dates-plan">18h–21h · Lun–Ven</div>
+        <span class="week-tag tag-s1">Stage 1</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 02 · 15–19 juin</div>
+        <div class="week-title-plan">Sprint labs — Qualification Stage 2</div>
+        <div class="week-dates-plan">7 jours critiques · Commencer dès lundi</div>
+        <span class="week-tag tag-s1">Stage 1 — 7 jours</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 03 · 22–26 juin</div>
+        <div class="week-title-plan">Pub/Sub & Dataflow streaming</div>
+        <div class="week-dates-plan">Skill badge : Streaming Analytics</div>
+        <span class="week-tag tag-s2">Stage 2</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 04 · 29 juin – 3 juil</div>
+        <div class="week-title-plan">BigQuery avancé — Optimisation</div>
+        <div class="week-dates-plan">Skill badge : Engineer Data in GCP</div>
+        <span class="week-tag tag-s2">Stage 2</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 05 · 6–10 juillet</div>
+        <div class="week-title-plan">Dataproc, Composer & ETL</div>
+        <div class="week-dates-plan">Skill badge : Cloud Composer / Dataproc</div>
+        <span class="week-tag tag-s2">Stage 2</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 06 · 13–17 juillet</div>
+        <div class="week-title-plan">Vertex AI & BigQuery ML</div>
+        <div class="week-dates-plan">Skill badge : Integrate BQ ML + Vertex</div>
+        <span class="week-tag tag-s2">Stage 2</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 07 · 20–24 juillet</div>
+        <div class="week-title-plan">Gouvernance, Sécurité & Dataplex</div>
+        <div class="week-dates-plan">Skill badge : Dataplex Governance</div>
+        <span class="week-tag tag-s2">Stage 2</span>
+      </div>
+      <div class="planning-week">
+        <div class="week-num">Semaine 08 · 27–31 juillet</div>
+        <div class="week-title-plan">Révision intensive & Examens blancs</div>
+        <div class="week-dates-plan">Viser score &gt; 80% · Planifier examen</div>
+        <span class="week-tag tag-prep">Préparation</span>
+      </div>
+      <div class="planning-week" style="border-color: rgba(255,209,102,0.3);">
+        <div class="week-num">Semaine 09 · Avant 17 septembre</div>
+        <div class="week-title-plan">🎯 Passage de l'examen officiel</div>
+        <div class="week-dates-plan">Deadline SWAG : 17 septembre 2026</div>
+        <span class="week-tag tag-exam">Examen</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    <span class="footer-logo">PDE Révision</span>
+    <span style="margin-left:0.5rem;">— Google Cloud Professional Data Engineer</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://cloud.google.com/learn/certification/data-engineer" target="_blank">Guide officiel</a>
+    <a href="https://www.cloudskillsboost.google/paths/16" target="_blank">Google Skills</a>
+    <a href="https://cloud.google.com/bigquery/docs" target="_blank">Docs BigQuery</a>
+  </div>
+  <div>Souleymane · Édition 2, 2026</div>
+</footer>
+
+<script>
+// ===== DATA =====
+const qaData = [
+  // BIGQUERY
+  { theme:'bigquery', diff:'easy', q:"Quelle est la différence fondamentale entre OLAP et OLTP ?", a:"OLAP (BigQuery) est optimisé pour l'analyse de grands volumes de données avec des requêtes complexes et agrégations. OLTP (Cloud SQL, Spanner) est optimisé pour des transactions unitaires fréquentes (insertions, mises à jour, lectures simples). BigQuery est OLAP — jamais utilisé pour des transactions en temps réel." },
+  { theme:'bigquery', diff:'easy', q:"Pourquoi BigQuery facture-t-il à la donnée scannée et non au temps d'exécution ?", a:"BigQuery utilise un modèle serverless où les ressources sont partagées. La facturation à la donnée scannée (octets lus) encourage les bonnes pratiques : partitionnement, clustering, sélection des colonnes nécessaires. Les 1 premiers To/mois sont gratuits." },
+  { theme:'bigquery', diff:'med', q:"Quelle est la différence entre partitionnement et clustering dans BigQuery ?", a:"Le partitionnement divise physiquement la table par colonne (date ou entier) — réduit les données scannées et donc le coût. Le clustering trie les données par colonnes fréquemment filtrées — améliore la vitesse. On combine les deux : d'abord PARTITION BY, puis CLUSTER BY (max 4 colonnes)." },
+  { theme:'bigquery', diff:'med', q:"Comment éviter de scanner toutes les partitions d'une table partitionnée par date ?", a:"Toujours inclure un filtre WHERE sur la colonne de partition dans la requête. Ex: WHERE DATE(date_commande) = '2026-06-08'. Sans ce filtre, BigQuery scanne toutes les partitions et le coût explose. Éviter aussi les fonctions sur la colonne de partition dans le WHERE car elles désactivent le pruning." },
+  { theme:'bigquery', diff:'med', q:"Qu'est-ce qu'une vue matérialisée dans BigQuery et quand l'utiliser ?", a:"Une vue matérialisée stocke les résultats d'une requête et les met à jour automatiquement lorsque les données sources changent. Idéale pour des requêtes répétitives et coûteuses (agrégations fréquentes, jointures complexes). Réduit le coût et améliore la vitesse des tableaux de bord BI." },
+  { theme:'bigquery', diff:'hard', q:"Comment sécuriser l'accès à des colonnes sensibles dans une table BigQuery partagée ?", a:"Utiliser les Authorized Views : créer une vue qui masque les colonnes sensibles, puis donner accès à la vue et non à la table source. Combiner avec Column-level Security et Policy Tags pour un contrôle granulaire sur les colonnes (ex: masquer les PII pour certains utilisateurs)." },
+  { theme:'bigquery', diff:'hard', q:"Expliquez la différence entre les slots BigQuery à la demande et les réservations.", a:"Les slots à la demande : paiement par octet scanné, ressources partagées, soumis aux quotas. Les réservations (Commitments) : capacité dédiée en slots achetée à l'avance, prévisibilité des coûts et des performances. Pour les workloads critiques et prévisibles, les réservations sont plus économiques et performantes." },
+  { theme:'bigquery', diff:'med', q:"Qu'est-ce que BigQuery ML et quels types de modèles peut-on entraîner ?", a:"BigQuery ML permet de créer et entraîner des modèles ML directement en SQL dans BigQuery. Modèles supportés : régression linéaire et logistique, K-means (clustering), matrices factorielles, ARIMA+ (séries temporelles), XGBoost, DNN, et import de modèles TensorFlow. Idéal quand les données sont déjà dans BigQuery." },
+
+  // PUBSUB
+  { theme:'pubsub', diff:'easy', q:"Qu'est-ce que le modèle publish/subscribe et pourquoi est-il utile ?", a:"Le modèle pub/sub découple les producteurs de données (publishers) des consommateurs (subscribers). Le publisher envoie vers un Topic sans connaître les subscribers. Les subscribers reçoivent les messages via des Subscriptions. Avantage : si un service tombe, les messages restent dans le Topic et sont livrés dès la reprise." },
+  { theme:'pubsub', diff:'easy', q:"Quelle est la différence entre Pull et Push subscription dans Pub/Sub ?", a:"Pull : le subscriber demande activement les messages — contrôle total sur le rythme, idéal pour Dataflow et les traitements batch. Push : Pub/Sub envoie automatiquement vers un endpoint HTTPS — latence plus faible, idéal pour Cloud Functions et les webhooks. Le choix dépend du besoin de contrôle vs de latence." },
+  { theme:'pubsub', diff:'med', q:"Pourquoi est-il crucial d'acquitter (ACK) les messages Pub/Sub après traitement ?", a:"Sans ACK, Pub/Sub considère que le message n'a pas été traité et le réenvoie après le deadline d'acquittement (ackDeadline, par défaut 10 secondes). Cela génère des doublons et peut surcharger le système. Toujours ACK après traitement réussi. Utiliser la Dead Letter Queue pour les messages qui échouent répétitivement." },
+  { theme:'pubsub', diff:'med', q:"Qu'est-ce qu'une Dead Letter Queue dans Pub/Sub et quand l'utiliser ?", a:"La DLQ (Dead Letter Topic) reçoit automatiquement les messages qui ont dépassé le nombre maximum de tentatives de livraison (maxDeliveryAttempts). Permet de ne pas bloquer le pipeline principal tout en conservant les messages problématiques pour analyse ultérieure. Essentiel pour la résilience des pipelines de production." },
+  { theme:'pubsub', diff:'hard', q:"Comment garantir l'ordre des messages dans Pub/Sub ?", a:"Par défaut, Pub/Sub ne garantit pas l'ordre. Pour garantir l'ordre : activer l'Ordering Key sur le Topic et utiliser la même clé pour les messages à ordonner. Limitation : les messages avec la même clé seront livrés dans l'ordre, mais le débit global est réduit. À utiliser seulement si l'ordre est critique." },
+  { theme:'pubsub', diff:'hard', q:"Quel est le flux recommandé pour ingérer des données de plusieurs sources en temps réel vers BigQuery ?", a:"Sources → Pub/Sub Topics (un par source ou un global) → Dataflow (transformation, validation, enrichissement) → BigQuery (tables partitionnées). Pub/Sub absorbe les pics de charge, Dataflow normalise et valide, BigQuery stocke. Ajouter Cloud DLP entre Pub/Sub et Dataflow pour masquer les PII." },
+
+  // DATAFLOW
+  { theme:'dataflow', diff:'easy', q:"Qu'est-ce qu'Apache Beam et quel est son lien avec Dataflow ?", a:"Apache Beam est un modèle de programmation open-source pour définir des pipelines de traitement de données batch et streaming. Cloud Dataflow est le service managé de GCP qui exécute les pipelines Apache Beam. Avantage : le même code Beam fonctionne sur Dataflow, Spark ou Flink — portabilité maximale." },
+  { theme:'dataflow', diff:'easy', q:"Quelle est la différence entre un pipeline batch et streaming dans Dataflow ?", a:"Batch : traite des données bornées (fichiers, exports historiques), s'exécute jusqu'à la fin puis s'arrête. Streaming : traite des données non bornées en continu (Pub/Sub, IoT), s'exécute indéfiniment. Avec Apache Beam, le même code peut gérer les deux modes — c'est le modèle unifié de Dataflow." },
+  { theme:'dataflow', diff:'med', q:"Expliquez les 3 types de fenêtres (Windowing) dans Dataflow.", a:"Fixed windows : fenêtres de durée fixe sans chevauchement (ex: toutes les 5 min). Sliding windows : fenêtres glissantes avec chevauchement (ex: moyenne mobile sur 1h calculée toutes les 5 min). Session windows : fenêtres basées sur l'activité — se ferment après une période d'inactivité (ex: sessions utilisateurs web)." },
+  { theme:'dataflow', diff:'med', q:"Qu'est-ce qu'un Watermark dans Dataflow et pourquoi est-il important ?", a:"Le watermark indique l'horodatage jusqu'auquel Dataflow a traité toutes les données. Les données arrivant après le watermark sont considérées 'tardives' (late data). Il permet à Dataflow de savoir quand fermer une fenêtre et émettre les résultats. Un watermark trop conservateur = haute latence. Trop agressif = données perdues." },
+  { theme:'dataflow', diff:'hard', q:"Quand choisir Dataflow vs Dataproc pour un nouveau projet ?", a:"Dataflow : nouveaux pipelines from scratch, batch + streaming unifié, zéro gestion d'infrastructure, autoscaling automatique, workloads Python/Java. Dataproc : migration de jobs Hadoop/Spark existants, workloads Hive/Pig/HBase nécessaires, contrôle fin sur le cluster, jobs Spark très spécifiques. Règle : nouveau projet → Dataflow." },
+  { theme:'dataflow', diff:'hard', q:"Comment garantir l'idempotence dans un pipeline Dataflow ?", a:"L'idempotence assure qu'une réexécution du pipeline donne le même résultat. En pratique : utiliser MERGE plutôt que INSERT dans BigQuery, partitionner par date et écraser la partition, utiliser des clés uniques pour déduplication, rendre les transformations déterministes, et tester les backfills. Critique pour les pipelines qui peuvent être relancés en cas d'échec." },
+
+  // DATAPROC
+  { theme:'dataproc', diff:'easy', q:"Quelle est la principale raison d'utiliser Dataproc plutôt que Dataflow ?", a:"Dataproc est choisi principalement pour migrer des workloads Hadoop/Spark existants vers GCP sans réécrire le code. Si vous avez des jobs Spark, Hive ou Pig déjà en production, Dataproc permet de les exécuter sur GCP avec un minimum de modifications. Pour les nouveaux projets, Dataflow est généralement préféré." },
+  { theme:'dataproc', diff:'med', q:"Qu'est-ce qu'un cluster éphémère Dataproc et pourquoi l'utiliser ?", a:"Un cluster éphémère est créé juste avant l'exécution d'un job et supprimé immédiatement après. Avantages : paiement uniquement pendant l'exécution du job, pas de ressources idle, réduction des coûts jusqu'à 70% avec les Preemptible VMs. Les données doivent être sur Cloud Storage (pas HDFS) pour cette approche." },
+  { theme:'dataproc', diff:'med', q:"Quelle est la meilleure pratique pour le stockage avec Dataproc ?", a:"Stocker les données sur Cloud Storage (GCS) plutôt que sur HDFS local du cluster. Raisons : les données persistent même après suppression du cluster, plusieurs clusters peuvent partager les mêmes données, GCS est moins cher et plus durable que HDFS local, et permet l'approche cluster éphémère." },
+
+  // VERTEX AI
+  { theme:'vertex', diff:'easy', q:"Quelle est la différence entre AutoML et Custom Training dans Vertex AI ?", a:"AutoML : Google s'occupe de tout (sélection du modèle, hyperparamètres, entraînement) — idéal pour débuter ou prototyper rapidement sans expertise ML. Custom Training : vous définissez l'architecture du modèle et le code d'entraînement — contrôle total, nécessite une expertise ML, pour des cas complexes ou spécifiques." },
+  { theme:'vertex', diff:'med', q:"Qu'est-ce que le Vertex AI Feature Store et pourquoi est-il important ?", a:"Le Feature Store est un référentiel centralisé pour stocker, partager et réutiliser des features ML. Il garantit que les mêmes features sont utilisées en entraînement et en inférence (pas de training-serving skew), facilite le partage entre équipes, et versionne les features pour la reproductibilité. Critique pour les pipelines ML en production." },
+  { theme:'vertex', diff:'med', q:"Qu'est-ce que la dérive des données (data drift) et comment Vertex AI la gère-t-elle ?", a:"La dérive des données = changement de la distribution des données en production par rapport aux données d'entraînement, ce qui dégrade silencieusement les performances du modèle. Vertex AI Model Monitoring détecte automatiquement les changements de distribution (tests statistiques), déclenche des alertes et peut initier un ré-entraînement." },
+  { theme:'vertex', diff:'hard', q:"Quand choisir BigQuery ML vs Vertex AI pour entraîner un modèle ?", a:"BigQuery ML : données déjà dans BigQuery, modèles simples (régression, classification binaire), équipe SQL sans expertise Python, pas de mouvement de données souhaité. Vertex AI : modèles complexes (DNN, transformers), besoin de pipelines ML complets, monitoring avancé, Feature Store, ou entraînement sur GPU/TPU." },
+
+  // SECURITE
+  { theme:'security', diff:'easy', q:"Qu'est-ce que le principe du moindre privilège dans IAM et comment l'appliquer ?", a:"Donner à chaque utilisateur, service ou application uniquement les permissions nécessaires à sa tâche, rien de plus. En pratique : éviter les rôles primitifs (Owner, Editor) en production, préférer les rôles prédéfinis (BigQuery Data Viewer), créer des comptes de service dédiés par application avec uniquement les permissions requises." },
+  { theme:'security', diff:'med', q:"Qu'est-ce que Cloud DLP et dans quel cas l'utiliser dans un pipeline ?", a:"Cloud DLP (Data Loss Prevention) détecte et protège automatiquement les données sensibles : noms, emails, numéros de carte bancaire, numéros de sécurité sociale (PII). Dans un pipeline : insérer DLP entre la source et la transformation pour masquer/tokeniser les PII avant qu'elles n'atteignent BigQuery ou d'autres systèmes." },
+  { theme:'security', diff:'med', q:"Pourquoi les Data Access Logs de BigQuery ne sont-ils pas activés par défaut ?", a:"Les Data Access Logs génèrent un très grand volume de logs (chaque requête BigQuery est loggée) ce qui peut engendrer des coûts importants de stockage Cloud Logging. Google les désactive par défaut pour éviter des coûts surprises. En production et chez Anthropic, ils DOIVENT être activés pour la traçabilité et la conformité." },
+  { theme:'security', diff:'hard', q:"Comment sécuriser un pipeline de données qui traite des données très sensibles (niveau Anthropic) ?", a:"Architecture multi-couches : 1) IAM + comptes de service dédiés par composant, 2) VPC Service Controls pour périmètre de sécurité, 3) Cloud DLP pour masquage PII à l'entrée, 4) CMEK (clés de chiffrement gérées par le client) pour BigQuery et GCS, 5) Data Access Audit Logs activés, 6) Dataplex pour gouvernance et catalogage, 7) Monitoring et alertes en temps réel." },
+  { theme:'security', diff:'hard', q:"Qu'est-ce que VPC Service Controls et comment protège-t-il vos données ?", a:"VPC Service Controls crée un périmètre de sécurité autour des services GCP (BigQuery, GCS, etc.) — même un utilisateur IAM autorisé ne peut pas accéder aux données depuis l'extérieur du périmètre. Protège contre les exfiltrations de données, les accès depuis des IPs non autorisées, et les erreurs de configuration IAM qui exposeraient accidentellement des données." }
+];
+
+// ===== STATE =====
+let marks = JSON.parse(localStorage.getItem('pde_marks') || '{}');
+let quizState = { questions: [], current: 0, score: 0, answered: false, theme: 'all' };
+let currentQATheme = 'all';
+
+// ===== FICHES =====
+function showTheme(id) {
+  document.querySelectorAll('.fiche-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('fiche-' + id).classList.add('active');
+  document.querySelectorAll('#fiches .theme-tab').forEach((t, i) => {
+    const ids = ['bigquery','pubsub','dataflow','dataproc','composer','storage','vertex','security'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+}
+
+// ===== Q&A =====
+function showQA(theme) {
+  currentQATheme = theme;
+  const titles = { all:'Toutes les questions', bigquery:'BigQuery', pubsub:'Pub/Sub', dataflow:'Dataflow', dataproc:'Dataproc', vertex:'Vertex AI', security:'Sécurité' };
+  document.getElementById('qa-title').textContent = titles[theme] || theme;
+  document.querySelectorAll('#qa .theme-tab').forEach((t, i) => {
+    const ids = ['all','bigquery','pubsub','dataflow','dataproc','vertex','security'];
+    t.classList.toggle('active', ids[i] === theme);
+  });
+  renderQA(theme);
+}
+
+function renderQA(theme) {
+  const list = document.getElementById('qa-list');
+  const filtered = theme === 'all' ? qaData : qaData.filter(q => q.theme === theme);
+  list.innerHTML = filtered.map((item, i) => `
+    <div class="qa-item ${marks[theme+'_'+i] || ''}" id="qa-item-${i}">
+      <div class="qa-question" onclick="toggleQA(${i})">
+        <span class="qa-num">Q${String(i+1).padStart(2,'0')}</span>
+        <span class="qa-q">${item.q}</span>
+        <span class="qa-difficulty diff-${item.diff}">${item.diff === 'easy' ? 'Facile' : item.diff === 'med' ? 'Moyen' : 'Difficile'}</span>
+        <span class="qa-chevron" id="chev-${i}">▼</span>
+      </div>
+      <div class="qa-answer" id="ans-${i}">
+        <p class="qa-answer-text">${item.a}</p>
+        <div class="answer-actions">
+          <button class="mark-btn mark-correct" onclick="markItem(${i},'correct','${theme}')">✓ Je savais</button>
+          <button class="mark-btn mark-incorrect" onclick="markItem(${i},'incorrect','${theme}')">✗ À revoir</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleQA(i) {
+  const ans = document.getElementById('ans-'+i);
+  const chev = document.getElementById('chev-'+i);
+  const open = ans.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+function markItem(i, status, theme) {
+  const key = currentQATheme + '_' + i;
+  marks[key] = status;
+  localStorage.setItem('pde_marks', JSON.stringify(marks));
+  document.getElementById('qa-item-'+i).className = 'qa-item ' + status;
+  updateProgress();
+}
+
+function expandAll() {
+  document.querySelectorAll('.qa-answer').forEach(a => a.classList.add('open'));
+  document.querySelectorAll('.qa-chevron').forEach(c => c.classList.add('open'));
+}
+
+function collapseAll() {
+  document.querySelectorAll('.qa-answer').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.qa-chevron').forEach(c => c.classList.remove('open'));
+}
+
+// ===== QUIZ =====
+function startQuiz(theme) {
+  document.querySelectorAll('#quiz .theme-tab').forEach((t, i) => {
+    const ids = ['all','bigquery','pubsub','dataflow','security'];
+    t.classList.toggle('active', ids[i] === theme);
+  });
+  let pool = theme === 'all' ? [...qaData] : qaData.filter(q => q.theme === theme);
+  pool = pool.sort(() => Math.random() - 0.5).slice(0, Math.min(10, pool.length));
+  quizState = { questions: pool, current: 0, score: 0, answered: false, theme };
+  document.getElementById('quiz-main').classList.remove('hidden');
+  document.getElementById('quiz-result').classList.add('hidden');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizState.questions[quizState.current];
+  if (!q) { showResult(); return; }
+  document.getElementById('quiz-counter').textContent = `Question ${quizState.current + 1} / ${quizState.questions.length}`;
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-explain').className = 'quiz-explain';
+  document.getElementById('quiz-next').style.display = 'none';
+  quizState.answered = false;
+
+  // Generate 3 wrong answers from other questions
+  const others = qaData.filter(x => x.q !== q.q).sort(() => Math.random() - 0.5).slice(0, 3);
+  const opts = [{ text: q.a, correct: true }, ...others.map(o => ({ text: o.a.slice(0, 120) + '...', correct: false }))].sort(() => Math.random() - 0.5);
+
+  document.getElementById('quiz-opts').innerHTML = opts.map((o, i) =>
+    `<button class="quiz-opt" onclick="selectOpt(this, ${o.correct}, ${i})">${o.text.length > 100 ? o.text.slice(0, 100) + '…' : o.text}</button>`
+  ).join('');
+}
+
+function selectOpt(btn, correct) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.current];
+  document.querySelectorAll('.quiz-opt').forEach(b => {
+    b.disabled = true;
+    if (b === btn) b.classList.add(correct ? 'correct' : 'incorrect');
+  });
+  if (correct) quizState.score++;
+  const explain = document.getElementById('quiz-explain');
+  explain.textContent = '📖 ' + q.a;
+  explain.classList.add('show');
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQuestion() {
+  quizState.current++;
+  if (quizState.current >= quizState.questions.length) { showResult(); return; }
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('quiz-main').classList.add('hidden');
+  document.getElementById('quiz-result').classList.remove('hidden');
+  const score = quizState.score;
+  const total = quizState.questions.length;
+  document.getElementById('quiz-score-num').textContent = score + '/' + total;
+  const pct = Math.round(score / total * 100);
+  const msgs = { 90: '🏆 Excellent ! Vous êtes prêt pour l\'examen.', 70: '👍 Bon travail ! Révisez les points faibles.', 0: '📚 Continuez à réviser, vous progressez !' };
+  document.getElementById('quiz-msg').textContent = pct >= 90 ? msgs[90] : pct >= 70 ? msgs[70] : msgs[0];
+}
+
+function restartQuiz() { startQuiz(quizState.theme); }
+
+// ===== PROGRESS =====
+function updateProgress() {
+  const themes = ['bigquery','pubsub','dataflow','dataproc','vertex','security'];
+  let totalAll = 0, doneAll = 0;
+  themes.forEach(theme => {
+    const themeQs = qaData.filter(q => q.theme === theme);
+    const done = Object.keys(marks).filter(k => k.startsWith('all_') || k.startsWith(theme + '_')).length;
+    // Count correct marks per theme
+    const correct = qaData.reduce((acc, q, i) => {
+      if (q.theme === theme && (marks['all_' + qaData.indexOf(q)] === 'correct' || marks[theme + '_' + i] === 'correct')) acc++;
+      return acc;
+    }, 0);
+    const pct = themeQs.length ? Math.round(correct / themeQs.length * 100) : 0;
+    const el = document.getElementById('p-' + theme);
+    const bar = document.getElementById('b-' + theme);
+    if (el) el.textContent = pct + '%';
+    if (bar) bar.style.width = pct + '%';
+    totalAll += themeQs.length;
+    doneAll += correct;
+  });
+  const globalPct = totalAll ? Math.round(doneAll / totalAll * 100) : 0;
+  const gpEl = document.getElementById('global-pct');
+  if (gpEl) gpEl.textContent = globalPct + '%';
+  const hpEl = document.getElementById('header-progress');
+  if (hpEl) hpEl.textContent = globalPct + '% complété';
+}
+
+// ===== NAV ACTIVE =====
+const sections = ['fiches','qa','quiz','planning'];
+window.addEventListener('scroll', () => {
+  let current = 'fiches';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) current = id;
+  });
+  document.querySelectorAll('nav a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ===== INIT =====
+renderQA('all');
+startQuiz('all');
+updateProgress();
+</script>
+</body>
+</html>
